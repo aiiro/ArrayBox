@@ -1,0 +1,28 @@
+{
+  "name": "aiiro/array-box",
+  "type": "library",
+  "description": "ArrayBox is a package to manipulate the array.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "aiiro",
+      "email": "aiiro@users.noreply.github.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ArrayBox\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ArrayBox\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7"
+  }
+}
