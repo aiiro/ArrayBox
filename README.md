@@ -1,6 +1,8 @@
 ArrayBox
 =======================
 
+[![Circle CI](https://circleci.com/gh/aiiro/ArrayBox.svg?&style=shield)](https://circleci.com/gh/aiiro/ArrayBox)
+
 ArrayBox is a PHP helper library that makes easy to manipulate the array.
 
 ## Installing 
