@@ -26,14 +26,11 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      # about phpunit
-      - run: which phpunit
-
       # Install Composer
-      - run: curl -sS https://getcomposer.org/installer | php -- --install-dir=./vendor/bin --filename=composer
+      - run: curl -sS https://getcomposer.org/installer | php -- --filename=composer
 
       # Run Composer install
-      - run: ./vendor/bin/composer install -n --prefer-dist
+      - run: ./composer install -n --prefer-dist
 
       - save_cache:
           paths:
@@ -41,4 +38,4 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
         
       # run tests!
-      - run: phpunit
+      - run: ./vendor/bin/phpunit
