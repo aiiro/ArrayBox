@@ -25,6 +25,7 @@ require 'vendor/autoload.php';
 ### \ArrayBox\Helper
 * sort2Dimensional - Sort two-dimensional array using the given $first, $second parameter.
 * duplicatesInMultiDimensional - Find duplications in multi dimensional array.
+* between - Retrieve the values within the given range.
 
 ## Usage
 
