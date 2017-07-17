@@ -57,4 +57,29 @@ class Helper
         return $duplicate_values;
     }
 
+    /**
+     * Retrieve the values within the given range.
+     *
+     * @param $data array
+     * @param null|int $from
+     * @param null|int $to
+     * @return array
+     */
+    public static function between($data, $from=null, $to=null)
+    {
+        if (empty($from) && empty($to)) {
+            return $data;
+        }
+
+        if (empty($from)) {
+            return array_slice($data, $from, $to + 1);
+        }
+
+        if ($to < 0) {
+            return array_slice($data, $from, count($data));
+        }
+
+        return array_slice($data, $from, $to);
+    }
+
 }

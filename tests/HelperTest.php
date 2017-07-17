@@ -119,4 +119,29 @@ class HelperTest extends TestCase
 
         $this->assertEquals($expected, Helper::duplicatesInMultiDimensional($data));
     }
+
+    /**
+     * @test
+     * @covers Helper::between()
+     */
+    public function retrieve_values_within_the_given_range()
+    {
+        // Prepare
+        $data = [
+            'a', 'b', 'c', 'd', 'e', 'f',
+        ];
+
+        $this->assertEquals(['b', 'c', 'd', 'e'], Helper::between($data, 1, 4));
+        $this->assertEquals(['a', 'b', 'c', 'd'], Helper::between($data, 0, 3));
+        $this->assertEquals(['c', 'd', 'e', 'f'], Helper::between($data, 2, -1));
+
+        $this->assertEquals(['a', 'b', 'c', 'd'], Helper::between($data, null, 3));
+        $this->assertEquals(['a', 'b', 'c', 'd', 'e'], Helper::between($data, null, -2));
+
+        $this->assertEquals(['a', 'b', 'c', 'd', 'e', 'f'], Helper::between($data, 0, null));
+        $this->assertEquals(['c', 'd', 'e', 'f'], Helper::between($data, 2, null));
+        $this->assertEquals(['f'], Helper::between($data, -1, null));
+
+    }
+
 }
