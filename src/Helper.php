@@ -82,4 +82,21 @@ class Helper
         return array_slice($data, $from, $to);
     }
 
+    /**
+     * Retrieve the values except for the given value.
+     *
+     * @param array $data
+     * @param $null
+     * @param bool $preserve_key
+     * @return array
+     */
+    public static function except($data, $null, $preserve_key=false)
+    {
+        $filtered = array_filter($data, function ($element) use ($null) {
+            return ($element !== $null) ? true : false;
+        });
+
+        return ($preserve_key) ? $filtered : array_values($filtered);
+    }
+
 }

@@ -144,4 +144,69 @@ class HelperTest extends TestCase
 
     }
 
+    /**
+     * @test
+     * @covers Helper::except()
+     * @dataProvider exceptDataProvider
+     * @param $value
+     * @param $expected
+     */
+    public function retrieve_values_from_array_except_for_the_given_one($value, $expected)
+    {
+        $data = [1, true, 1, null, 'foo', false, 'bar'];
+
+        $this->assertEquals($expected, Helper::except($data, $value));
+    }
+
+    public function exceptDataProvider()
+    {
+        return [
+            'number' => [
+                'value'    => 1,
+                'expected' => [true, null, 'foo', false, 'bar'],
+            ],
+            'string' => [
+                'value'    => 'foo',
+                'expected' => [1, true, 1, null, false, 'bar'],
+            ],
+            'true' => [
+                'value'    => true,
+                'expected' => [1, 1, null, 'foo', false, 'bar'],
+            ],
+            'false' => [
+                'value'    => false,
+                'expected' => [1, true, 1, null, 'foo', 'bar'],
+            ],
+            'null' => [
+                'value'    => null,
+                'expected' => [1, true, 1, 'foo', false, 'bar'],
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @covers Helper::except()
+     */
+    public function except_can_preserve_original_key()
+    {
+        $data = [
+            'alpha'   => 1,
+            'bravo'   => true,
+            'charlie' => 1,
+            'delta'   => null,
+            'echo'    => 'foo',
+            'foxtrot' => false,
+            'golf'    => 'bar'
+        ];
+
+        $this->assertEquals([
+            'bravo'   => true,
+            'delta'   => null,
+            'echo'    => 'foo',
+            'foxtrot' => false,
+            'golf'    => 'bar'
+        ], Helper::except($data, 1, true));
+    }
+
 }
