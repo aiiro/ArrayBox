@@ -11,12 +11,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "ArrayBox\\": "src/"
+      "ArrayBox\\": "src/ArrayBox"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ArrayBox\\Tests\\": "tests/"
+      "Tests\\ArrayBox\\": "tests/"
     }
   },
   "require": {
