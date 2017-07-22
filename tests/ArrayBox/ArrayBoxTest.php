@@ -3,6 +3,7 @@
 namespace Tests\ArrayBox;
 
 use ArrayBox\ArrayBox;
+use ArrayBox\Exceptions\InvalidKeyException;
 
 /**
  * Class ArrayBoxTest
@@ -241,7 +242,6 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
      */
     public function retrieve_the_specified_values_from_array($value, $expected)
     {
-        // Prepare
         $instance = new ArrayBox([1, true, 1, null, 'foo', false, 'bar']);
 
         $this->assertEquals($expected, $instance->only($value));
@@ -298,5 +298,94 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
             'charlie' => 1,
         ], $instance->only(1, true));
     }
+
+    /**
+     * @test
+     * @covers       ArrayBox::contains()
+     * @dataProvider containsDataProvider
+     * @param $value
+     * @param $expected
+     */
+    public function check_if_the_passed_value_exists_in_the_array($value, $expected)
+    {
+        $instance = new ArrayBox([1, true, 1, null, 'foo', false, 'bar']);
+
+        $this->assertEquals($expected, $instance->contains($value));
+    }
+
+    /**
+     * data provider
+     * @return array
+     */
+    public function containsDataProvider()
+    {
+        return [
+            'number' => [
+                'value'    => 1,
+                'expected' => true,
+            ],
+            'string' => [
+                'value'    => 'foo',
+                'expected' => true,
+            ],
+            'true' => [
+                'value'    => true,
+                'expected' => true,
+            ],
+            'false' => [
+                'value'    => false,
+                'expected' => true,
+            ],
+            'null' => [
+                'value'    => null,
+                'expected' => true,
+            ],
+            'not contains' => [
+                'value'    => 2,
+                'expected' => false,
+            ]
+        ];
+    }
     
+    /**
+     * @test
+     * @covers ArrayBox::toArray()
+     */
+    public function it_can_convert_the_instance_properties_to_array()
+    {
+        $values = [1, true, 1, null, 'foo', false, 'bar'];
+        $instance = new ArrayBox($values);
+
+        $this->assertEquals(['values' => $values], $instance->toArray());
+    }
+
+    /**
+     * @test
+     * @covers ArrayBox::add
+     */
+    public function add_an_element_to_the_array()
+    {
+        $array_box = new ArrayBox([1, 2, 3]);
+        $array_box2 = new ArrayBox(['alpha' => 1, 'bravo' => true, 'charlie' => null]);
+
+        $array_box->add('4');
+        $array_box2->add('foo', 'bar');
+
+        $this->assertEquals([1, 2, 3, '4'], $array_box->getValues());
+        $this->assertEquals(['alpha' => 1, 'bravo' => true, 'charlie' => null, 'bar' => 'foo'], $array_box2->getValues());
+    }
+
+    /**
+     * @test
+     * @covers ArrayBox::add()
+     */
+    public function it_throws_exception_if_the_key_value_is_invalid()
+    {
+        $array_box = new ArrayBox([1, 2, 3]);
+
+        $this->expectException(InvalidKeyException::class);
+
+        $array_box->add(0, ['invalid_array']);
+    }
+
 }
