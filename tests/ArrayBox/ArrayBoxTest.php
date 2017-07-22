@@ -1,27 +1,46 @@
 <?php
 
-namespace ArrayBox\Tests;
+namespace Tests\ArrayBox;
 
-use ArrayBox\Helper;
-use PHPUnit\Framework\TestCase;
+use ArrayBox\ArrayBox;
 
 /**
- * Class HelperTest
+ * Class ArrayBoxTest
  *
- * @package ArrayBox\Tests
+ * @package Tests\ArrayBox
  */
-class HelperTest extends TestCase
+class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @test
-     * @covers       Helper::sort2Dimensional()
+     * @covers new ArrayBox()
+     */
+    public function array_box_instance_contains_the_array()
+    {
+        /** @var ArrayBox $instance */
+        $instance = new ArrayBox(1, 2, 3);
+        $instance2 = new ArrayBox([4, 5, 6]);
+        $instance3 = new ArrayBox(7, 8, ['foo', 'bar']);
+        $instance4 = new ArrayBox();
+
+        $this->assertEquals([1, 2, 3], $instance->getValue());
+        $this->assertEquals([4, 5, 6], $instance2->getValue());
+        $this->assertEquals([7, 8, ['foo', 'bar']], $instance3->getValue());
+        $this->assertEquals([], $instance4->getValue());
+    }
+
+    /**
+     * @test
+     * @covers       ArrayBox::sort2Dimensional()
      * @dataProvider sort2DimensionalDataProvider
      * @param $data
      * @param $expected
      */
     public function sort_two_dimensional_array($data, $expected)
     {
-        $this->assertEquals($expected, Helper::sort2Dimensional($data, 'volume', SORT_DESC, 'edition', SORT_ASC));
+        $instance = new ArrayBox($data);
+        $this->assertEquals($expected, $instance->sort2Dimensional('volume', SORT_DESC, 'edition', SORT_ASC));
     }
 
     /**
@@ -56,7 +75,7 @@ class HelperTest extends TestCase
 
     /**
      * @test
-     * @covers Helper::duplicatesInMultiDimensional
+     * @covers ArrayBox::duplicatesInMultiDimensional
      */
     public function find_the_duplication_in_2d_array()
     {
@@ -74,12 +93,14 @@ class HelperTest extends TestCase
             ['volume' => 2, 'edition' => 1],
         ];
 
-        $this->assertEquals($expected, Helper::duplicatesInMultiDimensional($data));
+        $instance = new ArrayBox($data);
+
+        $this->assertEquals($expected, $instance->duplicatesInMultiDimensional());
     }
 
     /**
      * @test
-     * @covers Helper::duplicatesInMultiDimensional
+     * @covers ArrayBox::duplicatesInMultiDimensional
      */
     public function find_the_duplication_in_3d_array()
     {
@@ -116,48 +137,50 @@ class HelperTest extends TestCase
                 ['volume' => 3, 'edition' => 2],
             ],
         ];
+        $instance = new ArrayBox($data);
 
-        $this->assertEquals($expected, Helper::duplicatesInMultiDimensional($data));
+        $this->assertEquals($expected, $instance->duplicatesInMultiDimensional());
     }
 
     /**
      * @test
-     * @covers Helper::between()
+     * @covers ArrayBox::between()
      */
     public function retrieve_values_within_the_given_range()
     {
-        // Prepare
-        $data = [
-            'a', 'b', 'c', 'd', 'e', 'f',
-        ];
+        $array_box = new ArrayBox([ 'a', 'b', 'c', 'd', 'e', 'f' ]);
 
-        $this->assertEquals(['b', 'c', 'd', 'e'], Helper::between($data, 1, 4));
-        $this->assertEquals(['a', 'b', 'c', 'd'], Helper::between($data, 0, 3));
-        $this->assertEquals(['c', 'd', 'e', 'f'], Helper::between($data, 2, -1));
+        $this->assertEquals(['b', 'c', 'd', 'e'], $array_box->between(1, 4));
+        $this->assertEquals(['a', 'b', 'c', 'd'], $array_box->between(0, 3));
+        $this->assertEquals(['c', 'd', 'e', 'f'], $array_box->between(2, -1));
 
-        $this->assertEquals(['a', 'b', 'c', 'd'], Helper::between($data, null, 3));
-        $this->assertEquals(['a', 'b', 'c', 'd', 'e'], Helper::between($data, null, -2));
+        $this->assertEquals(['a', 'b', 'c', 'd'], $array_box->between(null, 3));
+        $this->assertEquals(['a', 'b', 'c', 'd', 'e'], $array_box->between(null, -2));
 
-        $this->assertEquals(['a', 'b', 'c', 'd', 'e', 'f'], Helper::between($data, 0, null));
-        $this->assertEquals(['c', 'd', 'e', 'f'], Helper::between($data, 2, null));
-        $this->assertEquals(['f'], Helper::between($data, -1, null));
+        $this->assertEquals(['a', 'b', 'c', 'd', 'e', 'f'], $array_box->between(0, null));
+        $this->assertEquals(['c', 'd', 'e', 'f'], $array_box->between(2, null));
+        $this->assertEquals(['f'], $array_box->between(-1, null));
 
     }
 
     /**
      * @test
-     * @covers Helper::except()
+     * @covers ArrayBox::except()
      * @dataProvider exceptDataProvider
      * @param $value
      * @param $expected
      */
     public function retrieve_values_from_array_except_for_the_given_one($value, $expected)
     {
-        $data = [1, true, 1, null, 'foo', false, 'bar'];
+        $instance = new ArrayBox([1, true, 1, null, 'foo', false, 'bar']);
 
-        $this->assertEquals($expected, Helper::except($data, $value));
+        $this->assertEquals($expected, $instance->except($value));
     }
 
+    /**
+     * data provider
+     * @return array
+     */
     public function exceptDataProvider()
     {
         return [
@@ -186,11 +209,11 @@ class HelperTest extends TestCase
 
     /**
      * @test
-     * @covers Helper::except()
+     * @covers ArrayBox::except()
      */
-    public function except_can_preserve_original_key()
+    public function it_can_preserve_original_key()
     {
-        $data = [
+        $instance = new ArrayBox([
             'alpha'   => 1,
             'bravo'   => true,
             'charlie' => 1,
@@ -198,7 +221,7 @@ class HelperTest extends TestCase
             'echo'    => 'foo',
             'foxtrot' => false,
             'golf'    => 'bar'
-        ];
+        ]);
 
         $this->assertEquals([
             'bravo'   => true,
@@ -206,7 +229,7 @@ class HelperTest extends TestCase
             'echo'    => 'foo',
             'foxtrot' => false,
             'golf'    => 'bar'
-        ], Helper::except($data, 1, true));
+        ], $instance->except(1, true));
     }
 
 }

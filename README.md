@@ -22,7 +22,7 @@ require 'vendor/autoload.php';
 
 ## Functions
 
-### \ArrayBox\Helper
+### \ArrayBox\ArrayBox
 * sort2Dimensional - Sort two-dimensional array using the given $first, $second parameter.
 * duplicatesInMultiDimensional - Find duplications in multi dimensional array.
 * between - Retrieve the values within the given range.
@@ -44,7 +44,8 @@ $data = [
             ['volume' => 67, 'edition' => 7],
         ];
   
-$sorted = \ArrayBox\Helper::sort2Dimensional($data, 'volume', SORT_DESC, 'edition', SORT_ASC);
+$array_box = new \ArrayBox\ArrayBox($data);
+$sorted = $array_box->sort2Dimensional('volume', SORT_DESC, 'edition', SORT_ASC);
   
 // Result
 [
