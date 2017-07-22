@@ -24,10 +24,10 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
         $instance3 = new ArrayBox(7, 8, ['foo', 'bar']);
         $instance4 = new ArrayBox();
 
-        $this->assertEquals([1, 2, 3], $instance->getValue());
-        $this->assertEquals([4, 5, 6], $instance2->getValue());
-        $this->assertEquals([7, 8, ['foo', 'bar']], $instance3->getValue());
-        $this->assertEquals([], $instance4->getValue());
+        $this->assertEquals([1, 2, 3], $instance->getValues());
+        $this->assertEquals([4, 5, 6], $instance2->getValues());
+        $this->assertEquals([7, 8, ['foo', 'bar']], $instance3->getValues());
+        $this->assertEquals([], $instance4->getValues());
     }
 
     /**
@@ -232,4 +232,71 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
         ], $instance->except(1, true));
     }
 
+    /**
+     * @test
+     * @covers       ArrayBox::only()
+     * @dataProvider onlyDataProvider
+     * @param $value
+     * @param $expected
+     */
+    public function retrieve_the_specified_values_from_array($value, $expected)
+    {
+        // Prepare
+        $instance = new ArrayBox([1, true, 1, null, 'foo', false, 'bar']);
+
+        $this->assertEquals($expected, $instance->only($value));
+    }
+
+    /**
+     * data provider
+     * @return array
+     */
+    public function onlyDataProvider()
+    {
+        return [
+            'number' => [
+                'value'    => 1,
+                'expected' => [1, 1],
+            ],
+            'string' => [
+                'value'    => 'foo',
+                'expected' => ['foo'],
+            ],
+            'true' => [
+                'value'    => true,
+                'expected' => [true],
+            ],
+            'false' => [
+                'value'    => false,
+                'expected' => [false],
+            ],
+            'null' => [
+                'value'    => null,
+                'expected' => [null],
+            ],
+        ];
+    }
+    
+    /**
+     * @test
+     * @covers ArrayBox::only()
+     */
+    public function only_method_can_preserve_original_key()
+    {
+        $instance = new ArrayBox([
+            'alpha'   => 1,
+            'bravo'   => true,
+            'charlie' => 1,
+            'delta'   => null,
+            'echo'    => 'foo',
+            'foxtrot' => false,
+            'golf'    => 'bar'
+        ]);
+
+        $this->assertEquals([
+            'alpha'   => 1,
+            'charlie' => 1,
+        ], $instance->only(1, true));
+    }
+    
 }

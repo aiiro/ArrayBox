@@ -10,7 +10,7 @@ namespace ArrayBox;
 class ArrayBox
 {
     /** @var array */
-    protected $value = [];
+    protected $values = [];
 
     /**
      * ArrayBox constructor.
@@ -25,21 +25,21 @@ class ArrayBox
 
         if (count($values) > 1) {
             foreach ($values as $value) {
-                $this->value[] = $value;
+                $this->values[] = $value;
             }
         }
 
         if (is_array($values[0])) {
-            $this->value = $values[0];
+            $this->values = $values[0];
         }
     }
 
     /**
      * @return array
      */
-    public function getValue()
+    public function getValues()
     {
-        return $this->value;
+        return $this->values;
     }
 
     /**
@@ -61,13 +61,13 @@ class ArrayBox
      */
     public function sort2Dimensional($first, $first_order, $second, $second_order)
     {
-        $copy = $this->copy()->value;
+        $copy = $this->copy()->values;
 
         $first_column = [];
         $second_column = [];
 
         // Change the array of rows to array of columns.
-        foreach ($this->value as $key => $row) {
+        foreach ($this->values as $key => $row) {
             $first_column[$key] = $row[$first];
             $second_column[$key] = $row[$second];
         }
@@ -83,7 +83,7 @@ class ArrayBox
      */
     public function duplicatesInMultiDimensional()
     {
-        $serialized = array_map('serialize', $this->value);
+        $serialized = array_map('serialize', $this->values);
         $values_counts = array_count_values($serialized);
 
         $duplicate_values = [];
@@ -106,31 +106,47 @@ class ArrayBox
     public function between($from=null, $to=null)
     {
         if (empty($from) && empty($to)) {
-            return $this->value;
+            return $this->values;
         }
 
         if (empty($from)) {
-            return array_slice($this->value, $from, $to + 1);
+            return array_slice($this->values, $from, $to + 1);
         }
 
         if ($to < 0) {
-            return array_slice($this->value, $from, count($this->value));
+            return array_slice($this->values, $from, count($this->values));
         }
 
-        return array_slice($this->value, $from, $to);
+        return array_slice($this->values, $from, $to);
     }
 
     /**
      * Retrieve the values except for the given value.
      *
-     * @param $null
+     * @param $value
      * @param bool $preserve_key
      * @return array
      */
-    public function except($null, $preserve_key=false)
+    public function except($value, $preserve_key=false)
     {
-        $filtered = array_filter($this->value, function ($element) use ($null) {
-            return ($element !== $null) ? true : false;
+        $filtered = array_filter($this->values, function ($element) use ($value) {
+            return ($element !== $value) ? true : false;
+        });
+
+        return ($preserve_key) ? $filtered : array_values($filtered);
+    }
+
+    /**
+     * Retrieve the specified values.
+     *
+     * @param $value
+     * @param bool $preserve_key
+     * @return array
+     */
+    public function only($value, $preserve_key=false)
+    {
+        $filtered = array_filter($this->values, function ($element) use ($value) {
+            return ($element === $value) ? true : false;
         });
 
         return ($preserve_key) ? $filtered : array_values($filtered);

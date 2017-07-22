@@ -27,6 +27,7 @@ require 'vendor/autoload.php';
 * duplicatesInMultiDimensional - Find duplications in multi dimensional array.
 * between - Retrieve the values within the given range.
 * except - Retrieve the values except for the given value.
+* only - Retrieve only the specified value in array.
 
 ## Usage
 
