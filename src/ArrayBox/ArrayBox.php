@@ -2,6 +2,8 @@
 
 namespace ArrayBox;
 
+use ArrayBox\Exceptions\InvalidKeyException;
+
 /**
  * Class ArrayBox
  *
@@ -40,6 +42,24 @@ class ArrayBox
     public function getValues()
     {
         return $this->values;
+    }
+
+    /**
+     * Add passed value to the instance $values variable.
+     *
+     * @param $value
+     * @param null|string|int $key
+     */
+    public function add($value, $key=null)
+    {
+        if (!is_null($key)) {
+            if (!is_string($key) && !is_numeric($key)) {
+                throw new InvalidKeyException();
+            }
+            $this->values[$key] = $value;
+        } else {
+            $this->values[] = $value;
+        }
     }
 
     /**
@@ -150,6 +170,32 @@ class ArrayBox
         });
 
         return ($preserve_key) ? $filtered : array_values($filtered);
+    }
+
+    /**
+     * Check if the instance contains the passed value.
+     *
+     * @param $value
+     * @return bool
+     */
+    public function contains($value)
+    {
+        foreach ($this->values as $item) {
+            if ($item === $value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Convert the properties to array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 
 }
