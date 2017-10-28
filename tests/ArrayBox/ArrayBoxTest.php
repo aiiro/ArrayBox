@@ -46,13 +46,14 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 
     /**
      * data provider
+     *
      * @return array
      */
     public function sort2DimensionalDataProvider()
     {
         return [
             [
-                'data' => [
+                'data'     => [
                     ['volume' => 67, 'edition' => 2, 'impression' => 1],
                     ['volume' => 86, 'edition' => 1, 'impression' => 2],
                     ['volume' => 85, 'edition' => 6, 'impression' => 3],
@@ -149,7 +150,7 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
      */
     public function retrieve_values_within_the_given_range()
     {
-        $array_box = new ArrayBox([ 'a', 'b', 'c', 'd', 'e', 'f' ]);
+        $array_box = new ArrayBox(['a', 'b', 'c', 'd', 'e', 'f']);
 
         $this->assertEquals(['b', 'c', 'd', 'e'], $array_box->between(1, 4));
         $this->assertEquals(['a', 'b', 'c', 'd'], $array_box->between(0, 3));
@@ -166,7 +167,7 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers ArrayBox::except()
+     * @covers       ArrayBox::except()
      * @dataProvider exceptDataProvider
      * @param $value
      * @param $expected
@@ -180,6 +181,7 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 
     /**
      * data provider
+     *
      * @return array
      */
     public function exceptDataProvider()
@@ -193,15 +195,15 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
                 'value'    => 'foo',
                 'expected' => [1, true, 1, null, false, 'bar'],
             ],
-            'true' => [
+            'true'   => [
                 'value'    => true,
                 'expected' => [1, 1, null, 'foo', false, 'bar'],
             ],
-            'false' => [
+            'false'  => [
                 'value'    => false,
                 'expected' => [1, true, 1, null, 'foo', 'bar'],
             ],
-            'null' => [
+            'null'   => [
                 'value'    => null,
                 'expected' => [1, true, 1, 'foo', false, 'bar'],
             ],
@@ -249,6 +251,7 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 
     /**
      * data provider
+     *
      * @return array
      */
     public function onlyDataProvider()
@@ -262,21 +265,21 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
                 'value'    => 'foo',
                 'expected' => ['foo'],
             ],
-            'true' => [
+            'true'   => [
                 'value'    => true,
                 'expected' => [true],
             ],
-            'false' => [
+            'false'  => [
                 'value'    => false,
                 'expected' => [false],
             ],
-            'null' => [
+            'null'   => [
                 'value'    => null,
                 'expected' => [null],
             ],
         ];
     }
-    
+
     /**
      * @test
      * @covers ArrayBox::only()
@@ -315,28 +318,29 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
 
     /**
      * data provider
+     *
      * @return array
      */
     public function containsDataProvider()
     {
         return [
-            'number' => [
+            'number'       => [
                 'value'    => 1,
                 'expected' => true,
             ],
-            'string' => [
+            'string'       => [
                 'value'    => 'foo',
                 'expected' => true,
             ],
-            'true' => [
+            'true'         => [
                 'value'    => true,
                 'expected' => true,
             ],
-            'false' => [
+            'false'        => [
                 'value'    => false,
                 'expected' => true,
             ],
-            'null' => [
+            'null'         => [
                 'value'    => null,
                 'expected' => true,
             ],
@@ -346,7 +350,7 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
-    
+
     /**
      * @test
      * @covers ArrayBox::toArray()
@@ -372,7 +376,8 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
         $array_box2->add('foo', 'bar');
 
         $this->assertEquals([1, 2, 3, '4'], $array_box->getValues());
-        $this->assertEquals(['alpha' => 1, 'bravo' => true, 'charlie' => null, 'bar' => 'foo'], $array_box2->getValues());
+        $this->assertEquals(['alpha' => 1, 'bravo' => true, 'charlie' => null, 'bar' => 'foo'],
+            $array_box2->getValues());
     }
 
     /**
@@ -388,4 +393,98 @@ class ArrayBoxTest extends \PHPUnit_Framework_TestCase
         $array_box->add(0, ['invalid_array']);
     }
 
+    /**
+     * @test
+     * @covers ArrayBox::toJson()
+     */
+    public function it_can_convert_array_to_json()
+    {
+        $values = [
+            1,
+            2,
+            3,
+            4 => [
+                'foo',
+                'bar',
+                'foobar',
+            ],
+        ];
+
+        $array_box = new ArrayBox($values);
+
+        $this->assertEquals(json_encode($values), $array_box->toJson());
+    }
+
+    /**
+     * @test
+     * @covers ArrayBox::count()
+     */
+    public function it_can_count_the_number_of_items()
+    {
+
+        $array_box1 = new ArrayBox([]);
+        $array_box2 = new ArrayBox([1, 2, 3]);
+        $array_box3 = new ArrayBox([
+            1 => [
+                'foo',
+                'bar',
+                'foobar',
+            ],
+            2,
+            3,
+            4 => [
+                'foo',
+                'bar',
+                'foobar',
+            ],
+        ]);
+
+        $this->assertEquals(0, $array_box1->count());
+        $this->assertEquals(3, $array_box2->count());
+        $this->assertEquals(4, $array_box3->count());
+    }
+
+    /**
+     * @test
+     * @covers ArrayBox::get()
+     */
+    public function it_can_return_the_specified_keys_value()
+    {
+        $values = [
+            1 => [
+                'foo',
+                'bar',
+                'foobar',
+            ],
+            2,
+            3,
+            4 => [
+                'alpha',
+                'beta',
+            ],
+        ];
+
+        $array_box = new ArrayBox($values);
+        $array_box2 = new ArrayBox(['blue' => 'sea', 'dark' => 'night', 'array_box' => $array_box]);
+
+        $this->assertEquals($values, $array_box->get());
+        $this->assertEquals(2, $array_box->get(2));
+        $this->assertEquals(['alpha', 'beta'], $array_box->get(4));
+
+        $this->assertInstanceOf(ArrayBox::class, $array_box2->get('array_box'));
+        $this->assertEquals('sea', $array_box2->get('blue'));
+        $this->assertEquals($values, $array_box2->get('array_box')->get());
+    }
+
+    /**
+     * @test
+     * @covers ArrayBox::unique
+     */
+    public function it_can_remove_the_duplicate_items()
+    {
+        $array_box = new ArrayBox(['red', 'blue', 'red', 'blue', 'yellow', 'white', 'gold']);
+
+        $this->assertInstanceOf(ArrayBox::class, $array_box->unique());
+        $this->assertEquals(['red', 'blue', 'yellow', 'white', 'gold'], array_values($array_box->unique()->get()));
+    }
 }
